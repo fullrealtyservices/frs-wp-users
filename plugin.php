@@ -181,6 +181,40 @@ final class FRSUsers {
 		// Initialize Follow Up Boss integration
 		FollowUpBoss::init();
 
+		// BuddyPress integration: relabel Members→People / Friend→Connection,
+		// register Member Types + Group Types, install XProfile schema mirroring
+		// frs_* user_meta keys, one-way sync user_meta → xprofile, backfill CLI.
+		// Each class no-ops if BuddyPress isn't loaded, so this is safe on
+		// blogs/environments where BP is inactive.
+		\FRSUsers\Integrations\BuddyPressLabels::init();
+		\FRSUsers\Integrations\BuddyPressBootstrap::init();
+		\FRSUsers\Integrations\BuddyPressXProfileSchema::init();
+		\FRSUsers\Integrations\BuddyPressSync::init();
+		\FRSUsers\Integrations\BuddyPressBackfill::init();
+
+		// Pulls live agent roster from the C21 Masters Google Sheet via service-account
+		// auth, syncs region/office groups + creates/updates WP users + assigns
+		// member_type. Recurring 15-min via Action Scheduler; CLI: `wp frs-users roster-sync`.
+		\FRSUsers\Integrations\GoogleRosterSync::init();
+
+		// Pushes the locally-aggregated SQLite warehouse (Sheet ∪ base.frs ∪ Moxi)
+		// into production. Append-only safety model. CLI-only:
+		// `wp frs-users local-aggregate-sync --sqlite=/app/data/private/agents.db`.
+		\FRSUsers\Integrations\LocalAggregateSync::init();
+
+		// Dual-write aliasing between legacy `frs_*` user_meta keys and the
+		// new canonical names (native WP keys, vendor prefixes, bare names).
+		// Lets plugins be rewritten one at a time without breakage. Flip the
+		// `frs_meta_key_alias_enabled` filter to false once all consumers
+		// are migrated, then run `wp frs-users meta-alias --cleanup-legacy`.
+		\FRSUsers\Sync\MetaKeyAlias::init();
+
+		// Keep `office`, `region`, `department` user_meta cache in sync with
+		// the user's BP group memberships. Whenever a user joins/leaves a
+		// group, the human-readable name is re-cached on their user_meta so
+		// templates and the People & Places API can read it without joins.
+		\FRSUsers\Sync\GroupNameCache::init();
+
 		// Route Fluent Form 7 (Schedule A Call) emails to the loan officer
 		FluentFormRouting::init();
 
