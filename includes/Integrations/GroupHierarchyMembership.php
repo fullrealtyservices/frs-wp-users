@@ -32,12 +32,45 @@ class GroupHierarchyMembership {
 	/** Hard cap on chain depth (defense against parent_id cycles). */
 	const MAX_DEPTH = 20;
 
+	/**
+	 * Group types whose membership is admin-managed only — no self-join,
+	 * no request-membership UI, no self-leave. The roster owns who is in
+	 * each office/region/department; agents do not self-serve.
+	 */
+	const ADMIN_ONLY_TYPES = [ 'office', 'region', 'department' ];
+
 	public static function init(): void {
 		add_action( 'groups_join_group', [ __CLASS__, 'on_join' ], 20, 2 );
+
+		// Suppress the join / request-membership / leave buttons on
+		// admin-managed group types. Sync code and admin UI still work
+		// (those bypass the front-end button). This only kills the
+		// public-facing self-service UI.
+		add_filter( 'bp_get_group_join_button', [ __CLASS__, 'maybe_suppress_join_button' ], 20, 2 );
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::add_command( 'frs-users backfill-hierarchy', [ __CLASS__, 'cli_backfill' ] );
 		}
+	}
+
+	/**
+	 * Filter `bp_get_group_join_button` — returns false to render no button
+	 * when the group is an office / region / department. BP renders nothing
+	 * for falsy returns.
+	 *
+	 * @param array|false       $button BP-prepared button args (or false).
+	 * @param \BP_Groups_Group  $group  The group being rendered.
+	 * @return array|false
+	 */
+	public static function maybe_suppress_join_button( $button, $group ) {
+		if ( ! $group || empty( $group->id ) || ! function_exists( 'bp_groups_get_group_type' ) ) {
+			return $button;
+		}
+		$type = bp_groups_get_group_type( $group->id );
+		if ( $type && in_array( $type, self::ADMIN_ONLY_TYPES, true ) ) {
+			return false;
+		}
+		return $button;
 	}
 
 	/**
