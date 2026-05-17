@@ -205,12 +205,16 @@ class BuddyPressBootstrap {
 	 * already has the mapped role. Multi-role is by design — existing roles are
 	 * preserved.
 	 *
-	 * @param int    $user_id     The ID of the user receiving the member type.
-	 * @param string $member_type The member type being assigned.
-	 * @param bool   $append      Whether the type is being appended (BP-provided, unused).
+	 * Since BuddyPress 7.0, `bp_set_member_type` can fire with an array of
+	 * member type names (multi-type assignment). We normalize to an array and
+	 * iterate so each type's mapped role is applied.
+	 *
+	 * @param int          $user_id     The ID of the user receiving the member type.
+	 * @param string|array $member_type The member type(s) being assigned.
+	 * @param bool         $append      Whether the type is being appended (BP-provided, unused).
 	 */
 	public static function auto_add_role_for_member_type( $user_id, $member_type, $append = false ): void {
-		if ( ! $user_id || ! $member_type ) {
+		if ( ! $user_id || empty( $member_type ) ) {
 			return;
 		}
 
@@ -221,22 +225,31 @@ class BuddyPressBootstrap {
 		 */
 		$map = apply_filters( 'frs_bp_member_type_role_map', self::MEMBER_TYPE_ROLE_MAP );
 
-		if ( empty( $map[ $member_type ] ) ) {
-			return;
-		}
-
-		$role = $map[ $member_type ];
 		$user = get_user_by( 'id', $user_id );
-
-		if ( ! $user || in_array( $role, (array) $user->roles, true ) ) {
+		if ( ! $user ) {
 			return;
 		}
 
-		// Verify role exists before adding (avoid adding non-existent roles).
-		if ( ! get_role( $role ) ) {
-			return;
-		}
+		// Normalize to array — BP 7.0+ may pass an array of type names.
+		$types = (array) $member_type;
+		foreach ( $types as $type ) {
+			if ( ! is_string( $type ) || '' === $type ) {
+				continue;
+			}
+			if ( empty( $map[ $type ] ) ) {
+				continue;
+			}
 
-		$user->add_role( $role );
+			$role = $map[ $type ];
+			if ( in_array( $role, (array) $user->roles, true ) ) {
+				continue;
+			}
+			// Verify role exists before adding (avoid adding non-existent roles).
+			if ( ! get_role( $role ) ) {
+				continue;
+			}
+
+			$user->add_role( $role );
+		}
 	}
 }
