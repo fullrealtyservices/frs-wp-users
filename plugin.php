@@ -191,6 +191,7 @@ final class FRSUsers {
 		\FRSUsers\Integrations\BuddyPressXProfileSchema::init();
 		\FRSUsers\Integrations\BuddyPressSync::init();
 		\FRSUsers\Integrations\BuddyPressBackfill::init();
+		\FRSUsers\Integrations\GroupHierarchyMembership::init();
 
 		// Pulls live agent roster from the C21 Masters Google Sheet via service-account
 		// auth, syncs region/office groups + creates/updates WP users + assigns
