@@ -432,7 +432,13 @@ class LocalAggregateSync {
 				}
 			} catch ( \Throwable $e ) {
 				$stats['errors']++;
-				error_log( sprintf( '[LocalAggregateSync] failed person id=%s: %s', $person['id'] ?? '?', $e->getMessage() ) );
+				error_log( sprintf(
+					'[LocalAggregateSync] failed person id=%s: %s in %s:%d',
+					$person['id'] ?? '?',
+					$e->getMessage(),
+					$e->getFile(),
+					$e->getLine()
+				) );
 			}
 		}
 	}
