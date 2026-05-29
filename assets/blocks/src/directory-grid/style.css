@@ -785,6 +785,22 @@
     }
 }
 
+.frs-card__region {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--frs-text-light);
+    flex-shrink: 0;
+}
+
+.frs-card__region svg {
+    color: var(--frs-accent, #2563eb);
+    flex-shrink: 0;
+}
+
 .frs-card__service-areas {
     display: flex;
     flex-wrap: wrap;

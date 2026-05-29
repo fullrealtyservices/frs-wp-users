@@ -358,6 +358,7 @@ if ( ! function_exists( 'frs_get_profile_image' ) ) {
 			$slug           = $lo['profile_slug'] ?? $lo['id'] ?? '';
 			$profile_url    = $hub_url . $slug . '/';
 			$qr_data        = $lo['qr_code_data'] ?? '';
+			$region         = $lo['region'] ?? '';
 			$service_areas  = $lo['service_areas'] ?? array();
 			if ( is_string( $service_areas ) ) {
 				$service_areas = json_decode( $service_areas, true ) ?: array();
@@ -392,6 +393,12 @@ if ( ! function_exists( 'frs_get_profile_image' ) ) {
 					<p class="frs-card__title"><?php echo esc_html( $title ); ?></p>
 					<?php if ( $nmls ) : ?>
 						<p class="frs-card__nmls">NMLS# <?php echo esc_html( $nmls ); ?></p>
+					<?php endif; ?>
+					<?php if ( $region ) : ?>
+						<p class="frs-card__region">
+							<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+							<?php echo esc_html( $region ); ?>
+						</p>
 					<?php endif; ?>
 					<?php if ( ! empty( $display_areas ) ) : ?>
 						<div class="frs-card__service-areas">

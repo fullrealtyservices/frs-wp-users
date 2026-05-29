@@ -40,6 +40,7 @@ if (!empty($matched_roles)) {
         'job_title' => $user_profile->get_job_title() ?: \FRSUsers\Core\Roles::get_role_label($matched_role),
         'nmls' => $user_profile->get_nmls(),
         'city_state' => $user_profile->get_city_state(),
+        'region' => $user_profile->get_region(),
         'biography' => $user_profile->get_biography(),
         'headshot_url' => $user_profile->get_headshot_url(),
         'profile_slug' => $author->user_nicename,
@@ -93,6 +94,7 @@ $nmls = preg_match('/^1994\d{3}$/', $raw_nmls) ? '' : $raw_nmls;
 $email = $profile['email'] ?? '';
 $phone = $profile['phone_number'] ?? $profile['mobile_number'] ?? '';
 $location = $profile['city_state'] ?? '';
+$region = $profile['region'] ?? '';
 $bio = $profile['biography'] ?? '';
 $headshot_url = $profile['headshot_url'] ?? '';
 $profile_slug = $profile['profile_slug'] ?? '';
@@ -314,13 +316,13 @@ get_header();
                             <span class="frs-profile__nmls">| NMLS# <?php echo esc_html($nmls); ?></span>
                         <?php endif; ?>
                     </span>
-                    <?php if ($location) : ?>
+                    <?php $where = $location ?: $region; if ($where) : ?>
                         <span class="frs-profile__location">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                                 <circle cx="12" cy="10" r="3"/>
                             </svg>
-                            <?php echo esc_html($location); ?>
+                            <?php echo esc_html($where); ?>
                         </span>
                     <?php endif; ?>
                 </p>
