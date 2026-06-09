@@ -193,10 +193,10 @@ final class FRSUsers {
 		\FRSUsers\Integrations\BuddyPressBackfill::init();
 		\FRSUsers\Integrations\GroupHierarchyMembership::init();
 
-		// Pulls live agent roster from the C21 Masters Google Sheet via service-account
-		// auth, syncs region/office groups + creates/updates WP users + assigns
-		// member_type. Recurring 15-min via Action Scheduler; CLI: `wp frs-users roster-sync`.
-		\FRSUsers\Integrations\GoogleRosterSync::init();
+		// GoogleRosterSync removed June 2026 — sync was creating malformed users
+		// from the Sheet and re-importing them after delete attempts. Plugin file
+		// deleted and init call removed. Roster updates now happen via the
+		// LocalAggregateSync path or manual import.
 
 		// Pushes the locally-aggregated SQLite warehouse (Sheet ∪ base.frs ∪ Moxi)
 		// into production. Append-only safety model. CLI-only:
