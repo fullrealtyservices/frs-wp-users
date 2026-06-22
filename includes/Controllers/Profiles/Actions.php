@@ -291,6 +291,51 @@ class Actions {
 	}
 
 	/**
+	 * Update profile by user ID ("me" resolves to the current user).
+	 *
+	 * Self-service endpoint used by the front-end Profile Editor block. Resolves
+	 * the user, then delegates to update_profile() so the canonical save path runs
+	 * (sanitization, meta writes, and the frs_profile_saved action that fans the
+	 * change out to marketing sites via webhook sync).
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function update_profile_by_user( WP_REST_Request $request ) {
+		$user_id = $request->get_param( 'user_id' );
+
+		if ( $user_id === 'me' ) {
+			$user_id = get_current_user_id();
+		}
+
+		$user_id = absint( $user_id );
+
+		if ( ! $user_id ) {
+			return new WP_Error(
+				'invalid_user',
+				__( 'Invalid user.', 'frs-users' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		$profile = Profile::get_by_user_id( $user_id );
+
+		if ( ! $profile ) {
+			return new WP_Error(
+				'profile_not_found',
+				__( 'Profile not found for this user', 'frs-users' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		// update_profile() keys off the `id` param; in WordPress-native mode the
+		// profile id is the user id (Profile::find() -> get_userdata()).
+		$request->set_param( 'id', $user_id );
+
+		return $this->update_profile( $request );
+	}
+
+	/**
 	 * Get profile by slug
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -1129,6 +1174,45 @@ class Actions {
 
 		// Default: deny access
 		return false;
+	}
+
+	/**
+	 * Permission callback for the self-service "by user" update endpoint.
+	 *
+	 * Allows a logged-in user to update their own profile ("me" or their own ID),
+	 * and administrators to update anyone. Editing is only permitted where profile
+	 * editing is enabled (the hub); marketing sites stay read-only.
+	 *
+	 * @param WP_REST_Request|null $request Request object.
+	 * @return bool|WP_Error
+	 */
+	public function check_update_own_profile( $request = null ) {
+		// Editing is only allowed on the hub.
+		if ( ! Roles::is_profile_editing_enabled() ) {
+			return new WP_Error(
+				'editing_disabled',
+				__( 'Profile editing is disabled for this site. Profiles can only be edited on the hub.', 'frs-users' ),
+				array( 'status' => 403 )
+			);
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		// Administrators can edit any profile.
+		if ( current_user_can( 'edit_users' ) ) {
+			return true;
+		}
+
+		// Otherwise the target must be the current user.
+		$user_id = $request ? $request->get_param( 'user_id' ) : null;
+
+		if ( $user_id === 'me' ) {
+			return true;
+		}
+
+		return absint( $user_id ) === get_current_user_id();
 	}
 
 	/**

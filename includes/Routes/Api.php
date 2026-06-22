@@ -188,14 +188,21 @@ class Api {
 			)
 		);
 
-		// Get profile by user ID
+		// Get / update profile by user ID ("me" resolves to the current user)
 		register_rest_route(
 			self::$namespace,
 			'/profiles/user/(?P<user_id>[\w-]+)',
 			array(
-				'methods'             => 'GET',
-				'callback'            => array( self::$actions, 'get_profile_by_user' ),
-				'permission_callback' => array( self::$actions, 'check_read_permissions' ),
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( self::$actions, 'get_profile_by_user' ),
+					'permission_callback' => array( self::$actions, 'check_read_permissions' ),
+				),
+				array(
+					'methods'             => 'PUT',
+					'callback'            => array( self::$actions, 'update_profile_by_user' ),
+					'permission_callback' => array( self::$actions, 'check_update_own_profile' ),
+				),
 				'args'                => array(
 					'user_id' => array(
 						'description' => 'WordPress user ID or "me" for current user',
