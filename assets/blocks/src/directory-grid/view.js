@@ -8,6 +8,10 @@ import { store, getElement } from '@wordpress/interactivity';
 
 /**
  * Format phone number for display.
+ *
+ * Returns '' for anything that isn't plausibly a phone number instead of
+ * the raw input — a directory card should never show free text (e.g. bad
+ * data that ended up in the phone_number field) where a phone belongs.
  */
 function formatPhone( phone ) {
 	if ( ! phone ) return '';
@@ -18,7 +22,17 @@ function formatPhone( phone ) {
 	if ( digits.length === 11 && digits[ 0 ] === '1' ) {
 		return `(${ digits.slice( 1, 4 ) }) ${ digits.slice( 4, 7 ) }-${ digits.slice( 7 ) }`;
 	}
-	return phone;
+	return '';
+}
+
+/**
+ * Validate an NMLS number for display — short digit-only strings only.
+ * Anything else (e.g. free text that ended up in the field) is treated
+ * as absent rather than rendered.
+ */
+function validNmls( nmls ) {
+	const trimmed = ( nmls || '' ).toString().trim();
+	return /^\d{1,10}$/.test( trimmed ) ? trimmed : '';
 }
 
 /**
@@ -60,7 +74,7 @@ function createCard( lo, hubUrl, stateNames ) {
 	const title = ( ! rawTitle || rawTitle.toLowerCase() === 'loan originator' )
 		? 'Loan Originator'
 		: `Loan Originator / ${ rawTitle }`;
-	const nmls = lo.nmls || lo.nmls_number || '';
+	const nmls = validNmls( lo.nmls ) || validNmls( lo.nmls_number );
 	const email = lo.email || '';
 	const phone = lo.phone_number || lo.mobile_number || '';
 	const phoneFormatted = formatPhone( phone );
