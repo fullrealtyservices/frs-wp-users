@@ -217,6 +217,11 @@ $wrapper_attributes = get_block_wrapper_attributes(
 
 /**
  * Helper function to format phone numbers.
+ *
+ * Returns '' for anything that isn't plausibly a phone number (e.g. free-text
+ * that ended up in the phone_number field from bad data) instead of
+ * rendering it verbatim — a directory card should never show a paragraph of
+ * text where a phone number belongs.
  */
 if ( ! function_exists( 'frs_format_phone' ) ) {
 	function frs_format_phone( $phone ) {
@@ -230,7 +235,27 @@ if ( ! function_exists( 'frs_format_phone' ) ) {
 		if ( strlen( $digits ) === 11 && $digits[0] === '1' ) {
 			return sprintf( '(%s) %s-%s', substr( $digits, 1, 3 ), substr( $digits, 4, 3 ), substr( $digits, 7, 4 ) );
 		}
-		return $phone;
+		// Not a recognizable phone number — don't display it.
+		return '';
+	}
+}
+
+/**
+ * Helper function to validate an NMLS number for display.
+ *
+ * NMLS IDs are short numeric strings. Anything else (free text that ended up
+ * in the field from bad data) is treated as absent rather than rendered.
+ *
+ * @param string $nmls Raw NMLS value.
+ * @return string Digit-only NMLS, or '' if it doesn't look like one.
+ */
+if ( ! function_exists( 'frs_valid_nmls' ) ) {
+	function frs_valid_nmls( $nmls ) {
+		$trimmed = trim( (string) $nmls );
+		if ( $trimmed !== '' && ctype_digit( $trimmed ) && strlen( $trimmed ) <= 10 ) {
+			return $trimmed;
+		}
+		return '';
 	}
 }
 
@@ -350,7 +375,7 @@ if ( ! function_exists( 'frs_get_profile_image' ) ) {
 			} else {
 				$title = 'Loan Originator / ' . $raw_title;
 			}
-			$nmls           = $lo['nmls'] ?? $lo['nmls_number'] ?? '';
+			$nmls           = frs_valid_nmls( $lo['nmls'] ?? '' ) ?: frs_valid_nmls( $lo['nmls_number'] ?? '' );
 			$email          = $lo['email'] ?? '';
 			$phone          = $lo['phone_number'] ?? $lo['mobile_number'] ?? '';
 			$phone_formatted = frs_format_phone( $phone );
