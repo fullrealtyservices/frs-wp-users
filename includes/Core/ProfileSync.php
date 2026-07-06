@@ -63,7 +63,12 @@ class ProfileSync {
 	 * @return void
 	 */
 	public static function send_webhook_on_save( $profile_id, $profile_data ) {
-		self::send_profile_webhook( $profile_id );
+		// Use the snapshot captured at the moment Profile::save() finished,
+		// rather than re-reading the DB: MetaKeyAlias mirrors each field as
+		// save() writes it, so a fresh re-hydrate here can race that cascade
+		// and pick up transiently-inconsistent values instead of the correct
+		// ones save() just computed.
+		self::send_profile_webhook( $profile_id, $profile_data );
 	}
 
 	/**
@@ -93,10 +98,14 @@ class ProfileSync {
 	/**
 	 * Send profile data to all configured webhook endpoints
 	 *
-	 * @param int $user_id User ID.
+	 * @param int        $user_id      User ID.
+	 * @param array|null $profile_data Pre-built profile array to send. If null,
+	 *                                 hydrates fresh from the DB (used when no
+	 *                                 in-memory snapshot is available, e.g. a
+	 *                                 generic core `profile_update`).
 	 * @return void
 	 */
-	private static function send_profile_webhook( $user_id ) {
+	private static function send_profile_webhook( $user_id, $profile_data = null ) {
 		// Use network-wide site option so blog 1 + blog 2 + any future subsite
 		// all share the same endpoint config. Falls back to per-blog option for
 		// pre-migration compatibility.
@@ -108,17 +117,20 @@ class ProfileSync {
 			return;
 		}
 
-		// Get full profile data
-		$user = get_userdata( $user_id );
-		if ( ! $user ) {
-			return;
+		if ( null === $profile_data ) {
+			$user = get_userdata( $user_id );
+			if ( ! $user ) {
+				return;
+			}
+
+			$profile      = Profile::hydrate_from_user( $user );
+			$profile_data = $profile->toArray();
 		}
 
-		$profile = Profile::hydrate_from_user( $user );
 		$payload = array(
 			'event'     => 'profile_updated',
 			'timestamp' => time(),
-			'profile'   => $profile->toArray(),
+			'profile'   => $profile_data,
 		);
 
 		$secret = is_multisite()

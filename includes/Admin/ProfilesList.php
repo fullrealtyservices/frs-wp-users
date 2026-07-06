@@ -12,6 +12,7 @@
 namespace FRSUsers\Admin;
 
 use FRSUsers\Models\Profile;
+use FRSUsers\Core\PhoneFormatter;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -218,7 +219,8 @@ class ProfilesList extends \WP_List_Table {
 	 */
 	protected function column_phone_number( $item ) {
 		if ( ! empty( $item->phone_number ) ) {
-			return sprintf( '<a href="tel:%s">%s</a>', esc_attr( $item->phone_number ), esc_html( $item->phone_number ) );
+			$tel = preg_replace( '/[^\d+]/', '', $item->phone_number );
+			return sprintf( '<a href="tel:%s">%s</a>', esc_attr( $tel ), esc_html( PhoneFormatter::us( $item->phone_number ) ) );
 		}
 		return '—';
 	}

@@ -56,7 +56,7 @@ class MetaKeyAlias {
 
 		// Industry-standard identifiers
 		'frs_nmls'                   => 'nmls',
-		'frs_nmls_number'            => 'nmls',
+		'frs_nmls_number'            => 'nmls_number',
 		'frs_dre_license'            => 'dre_license',
 		'frs_license_number'         => 'license_number',
 		'frs_license_state'          => 'license_state',
@@ -204,8 +204,13 @@ class MetaKeyAlias {
 			return;
 		}
 
-		// Re-entry guard.
-		$guard_key = $user_id . ':' . $partner;
+		// Re-entry guard. Keyed by the *sorted* pair so it's symmetric —
+		// whichever side of the pair fires first, the recursive mirror write
+		// for the other side resolves to the same guard key. (Previously this
+		// checked under the partner's key but set/unset under the triggering
+		// key, which only worked by coincidence for 1:1 pairs and broke down
+		// whenever a canonical key had more than one legacy partner.)
+		$guard_key = $user_id . ':' . implode( '|', [ min( $meta_key, $partner ), max( $meta_key, $partner ) ] );
 		if ( ! empty( self::$mirroring[ $guard_key ] ) ) {
 			return;
 		}
@@ -216,9 +221,9 @@ class MetaKeyAlias {
 			return;
 		}
 
-		self::$mirroring[ $user_id . ':' . $meta_key ] = true;
+		self::$mirroring[ $guard_key ] = true;
 		update_user_meta( (int) $user_id, $partner, $meta_value );
-		unset( self::$mirroring[ $user_id . ':' . $meta_key ] );
+		unset( self::$mirroring[ $guard_key ] );
 	}
 
 	/**

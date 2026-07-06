@@ -277,11 +277,6 @@ class QRCode {
 	 * @return void
 	 */
 	public static function maybe_generate_qr_code( $profile_id, $profile_data ) {
-		// Only auto-generate if R2 is enabled (centralized storage)
-		if ( ! R2Storage::is_enabled() ) {
-			return;
-		}
-
 		// Never overwrite existing QR codes - they're synced across sites
 		$existing = get_user_meta( $profile_id, self::META_KEY, true );
 		if ( ! empty( $existing ) ) {

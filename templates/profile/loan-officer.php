@@ -82,6 +82,7 @@ $raw_nmls = $profile['nmls'] ?? '';
 $nmls = preg_match('/^1994\d{3}$/', $raw_nmls) ? '' : $raw_nmls;
 $email = $profile['email'] ?? '';
 $phone = $profile['phone_number'] ?? $profile['mobile_number'] ?? '';
+$phone = $phone ? \FRSUsers\Core\PhoneFormatter::us( $phone ) : $phone;
 $location = $profile['city_state'] ?? '';
 $region = $profile['region'] ?? '';
 $bio = $profile['biography'] ?? '';
