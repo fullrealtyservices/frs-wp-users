@@ -1,5 +1,29 @@
 node_modules/
 .DS_Store
+
+# vendor/ is committed for production (Deployer-for-Git does a raw git pull,
+# no composer step) — but only the runtime deps actually required at runtime.
+# Dev-only packages (composer install, no --no-dev) stay untracked here.
+vendor/antecedent/
+vendor/bin/
+vendor/brain/
+vendor/dealerdirect/
+vendor/doctrine/
+vendor/hamcrest/
+vendor/mockery/
+vendor/myclabs/
+vendor/nikic/
+vendor/phar-io/
+vendor/phpcompatibility/
+vendor/phpcsstandards/
+vendor/phpunit/
+vendor/sebastian/
+vendor/squizlabs/
+vendor/theseer/
+vendor/wp-coding-standards/
+vendor/wp-phpunit/
+vendor/yoast/
+vendor/composer/autoload_files.php
 *.log
 .env
 .vscode/
