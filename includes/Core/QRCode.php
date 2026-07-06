@@ -309,6 +309,19 @@ class QRCode {
 				$slug,
 				$cdn_url
 			) );
+
+			// ProfileSync::send_webhook_on_save (priority 10) already fired
+			// with the pre-generation snapshot, so a brand-new profile's
+			// first sync goes out without a QR code. Send one more webhook
+			// with the QR code merged in so the satellite gets it right away
+			// instead of waiting on some unrelated later save. Calling the
+			// sender directly (rather than re-firing frs_profile_saved)
+			// avoids duplicating the *other* seven hooks on that action
+			// (activity log, CRM syncs, notifications, etc).
+			if ( method_exists( '\FRSUsers\Core\ProfileSync', 'send_webhook_on_save' ) ) {
+				$profile_data['qr_code_data'] = $cdn_url;
+				\FRSUsers\Core\ProfileSync::send_webhook_on_save( $profile_id, $profile_data );
+			}
 		}
 	}
 
