@@ -31,6 +31,7 @@ if (!empty($matched_roles)) {
         'id' => $author->ID,
         'user_id' => $author->ID,
         'email' => $user_profile->get_email(),
+        'secondary_email' => $user_profile->get_secondary_email(),
         'first_name' => $user_profile->get_first_name(),
         'last_name' => $user_profile->get_last_name(),
         'display_name' => $user_profile->get_display_name(),

@@ -77,6 +77,10 @@ class UserProfile {
         return $this->user->user_email ?: '';
     }
 
+    public function get_secondary_email(): string {
+        return get_user_meta($this->user_id, 'frs_secondary_email', true) ?: '';
+    }
+
     public function get_display_name(): string {
         return $this->user->display_name ?: '';
     }
