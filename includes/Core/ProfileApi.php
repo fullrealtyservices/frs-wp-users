@@ -509,7 +509,7 @@ class ProfileApi {
 	 */
 	private function get_allowed_fields() {
 		return array(
-			'user_id', 'first_name', 'last_name', 'email', 'phone_number',
+			'user_id', 'first_name', 'last_name', 'email', 'secondary_email', 'phone_number',
 			'mobile_number', 'office', 'headshot_id', 'job_title', 'biography',
 			'date_of_birth', 'nmls', 'nmls_number', 'license_number', 'dre_license',
 			'brand', 'city_state', 'region', 'facebook_url', 'instagram_url',

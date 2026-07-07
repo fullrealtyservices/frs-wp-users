@@ -92,6 +92,7 @@ $raw_nmls = $profile['nmls'] ?? '';
 // Hide fake placeholder NMLS (1994xxx range)
 $nmls = preg_match('/^1994\d{3}$/', $raw_nmls) ? '' : $raw_nmls;
 $email = $profile['email'] ?? '';
+$secondary_email = $profile['secondary_email'] ?? '';
 $phone = $profile['phone_number'] ?? $profile['mobile_number'] ?? '';
 $phone = $phone ? \FRSUsers\Core\PhoneFormatter::us( $phone ) : $phone;
 $location = $profile['city_state'] ?? '';
@@ -335,6 +336,15 @@ get_header();
                                 <path d="M8 12h8M12 8v8"/>
                             </svg>
                             <?php echo esc_html($email); ?>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($secondary_email) : ?>
+                        <a href="mailto:<?php echo esc_attr($secondary_email); ?>" class="frs-profile__contact-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M8 12h8M12 8v8"/>
+                            </svg>
+                            <?php echo esc_html($secondary_email); ?>
                         </a>
                     <?php endif; ?>
                     <?php if ($phone) : ?>

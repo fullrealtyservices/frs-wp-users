@@ -43,6 +43,15 @@ class Profile {
 	public $email;
 
 	/**
+	 * Secondary/alternate email address. Shown alongside the primary
+	 * email (which stays first) rather than creating a second account
+	 * for the same person.
+	 *
+	 * @var string
+	 */
+	public $secondary_email;
+
+	/**
 	 * Display name.
 	 *
 	 * @var string
@@ -749,6 +758,7 @@ class Profile {
 		// Update all meta fields
 		update_user_meta( $this->user_id, 'first_name', $this->first_name );
 		update_user_meta( $this->user_id, 'last_name', $this->last_name );
+		update_user_meta( $this->user_id, 'frs_secondary_email', $this->secondary_email );
 		update_user_meta( $this->user_id, 'frs_phone_number', $this->phone_number );
 		update_user_meta( $this->user_id, 'frs_mobile_number', $this->mobile_number );
 		update_user_meta( $this->user_id, 'frs_office', $this->office );
@@ -874,6 +884,7 @@ class Profile {
 			'id'                      => $this->id,
 			'user_id'                 => $this->user_id,
 			'email'                   => $this->email,
+			'secondary_email'         => $this->secondary_email,
 			'first_name'              => $this->first_name,
 			'last_name'               => $this->last_name,
 			'display_name'            => $this->display_name,
@@ -1056,6 +1067,7 @@ class Profile {
 		$profile->id           = $user->ID;
 		$profile->user_id      = $user->ID;
 		$profile->email        = $user->user_email;
+		$profile->secondary_email = get_user_meta( $user->ID, 'frs_secondary_email', true );
 		$profile->display_name = $user->display_name;
 
 		// Meta fields with fallbacks

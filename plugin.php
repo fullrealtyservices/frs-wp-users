@@ -150,6 +150,10 @@ final class FRSUsers {
 		// Without main-site membership, ms_site_check blocks the post-SSO redirect.
 		\FRSUsers\Integrations\MultisiteProvisioning::init();
 
+		// Prevent duplicate accounts when someone signs in via SSO with a
+		// different email than their existing profile.
+		\FRSUsers\Integrations\SsoIdentityMatching::init();
+
 		// Initialize FluentCRM real-time sync integration
 		FluentCRMSync::get_instance()->init();
 

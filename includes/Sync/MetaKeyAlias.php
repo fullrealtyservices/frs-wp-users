@@ -86,6 +86,7 @@ class MetaKeyAlias {
 		'frs_phone_number'           => 'phone_number',
 		'frs_mobile_number'          => 'mobile_number',
 		'frs_business_email'         => 'business_email',
+		'frs_secondary_email'        => 'secondary_email',
 		'frs_middle_name'            => 'middle_name',
 		'frs_date_of_birth'          => 'date_of_birth',
 		'frs_job_title'              => 'job_title',
