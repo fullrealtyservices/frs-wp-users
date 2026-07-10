@@ -154,6 +154,10 @@ final class FRSUsers {
 		// different email than their existing profile.
 		\FRSUsers\Integrations\SsoIdentityMatching::init();
 
+		// Send a branded welcome email the first time a loan officer's
+		// profile becomes complete and public.
+		\FRSUsers\Integrations\WelcomeEmail::init();
+
 		// Initialize FluentCRM real-time sync integration
 		FluentCRMSync::get_instance()->init();
 
