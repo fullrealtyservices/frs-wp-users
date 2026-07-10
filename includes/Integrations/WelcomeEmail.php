@@ -100,19 +100,62 @@ class WelcomeEmail {
 	}
 
 	/**
-	 * Render and send the welcome email.
+	 * Manually (re-)send the welcome email for a specific user, optionally
+	 * with one-off extra BCC recipients for this send only (the permanent
+	 * PERMANENT_BCC is always included regardless).
 	 *
-	 * @param string $to          Recipient email.
-	 * @param string $first_name  Recipient first name.
-	 * @param string $profile_url Live public profile URL.
-	 * @param string $hub_url     myhub21.com login URL.
-	 * @param string $work_email  Recipient's work email (for the login instructions).
+	 * @param int      $profile_id User ID.
+	 * @param string[] $extra_bcc  Additional BCC recipients for this send only.
 	 * @return bool
 	 */
-	private static function send( string $to, string $first_name, string $profile_url, string $hub_url, string $work_email ): bool {
+	public static function send_manual( int $profile_id, array $extra_bcc = array() ): bool {
+		$user = get_userdata( $profile_id );
+		if ( ! $user ) {
+			return false;
+		}
+
+		$profile     = \FRSUsers\Models\Profile::find( $profile_id );
+		$slug        = $profile ? $profile->profile_slug : $user->user_nicename;
+		$first_name  = $profile ? $profile->first_name : $user->first_name;
+		$profile_url = 'https://21stcenturylending.com/lo/' . $slug . '/';
+		$hub_url     = home_url( '/' );
+
+		$sent = self::send( $user->user_email, $first_name, $profile_url, $hub_url, $user->user_email, $extra_bcc );
+
+		if ( $sent ) {
+			update_user_meta( $profile_id, self::SENT_META_KEY, time() );
+		}
+
+		return $sent;
+	}
+
+	/**
+	 * Always BCC'd on every welcome email, so the team has a running record
+	 * of what new agents received.
+	 *
+	 * @var string
+	 */
+	const PERMANENT_BCC = 'experience@fullrealtyservices.com';
+
+	/**
+	 * @param string   $to           Recipient email.
+	 * @param string   $first_name   Recipient first name.
+	 * @param string   $profile_url  Live public profile URL.
+	 * @param string   $hub_url      myhub21.com login URL.
+	 * @param string   $work_email   Recipient's work email (for the login instructions).
+	 * @param string[] $extra_bcc    Additional one-off BCC recipients for this send only.
+	 * @return bool
+	 */
+	private static function send( string $to, string $first_name, string $profile_url, string $hub_url, string $work_email, array $extra_bcc = array() ): bool {
 		$subject = sprintf( 'Welcome to 21st Century Lending, %s!', $first_name );
 		$body    = self::render( $first_name, $profile_url, $hub_url, $work_email );
-		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+		$headers   = array();
+		$headers[] = 'Content-Type: text/html; charset=UTF-8';
+		$headers[] = 'From: 21st Century Lending Experience <experience@fullrealtyservices.com>';
+		foreach ( array_merge( array( self::PERMANENT_BCC ), $extra_bcc ) as $bcc ) {
+			$headers[] = 'Bcc: ' . $bcc;
+		}
 
 		// Site 2 (/lending) is the WPO365-configured sender — routes through
 		// Microsoft Graph as experience@fullrealtyservices.com.
