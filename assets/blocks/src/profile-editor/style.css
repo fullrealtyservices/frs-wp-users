@@ -381,6 +381,16 @@
     font-style: italic;
 }
 
+.frs-profile__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.frs-profile__title > svg {
+    flex-shrink: 0;
+}
+
 .frs-profile__location {
     display: inline-flex;
     align-items: center;
@@ -1178,9 +1188,16 @@
 }
 
 .frs-profile__social-edit-item label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--frs-text-light);
+}
+
+.frs-profile__social-edit-item label svg {
+    flex-shrink: 0;
 }
 
 .frs-profile__social-edit-item input {

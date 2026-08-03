@@ -280,6 +280,10 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 				</div>
 				<p class="frs-profile__title-location">
 					<span class="frs-profile__title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+							<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+							<rect width="20" height="14" x="2" y="6" rx="2"/>
+						</svg>
 						<!-- View mode -->
 						<span data-view-mode><?php echo esc_html( $job_title ); ?></span>
 						<!-- Edit mode -->
@@ -299,7 +303,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					<?php if ( $location ) : ?>
 						<span class="frs-profile__location">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+								<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
 								<circle cx="12" cy="10" r="3"/>
 							</svg>
 							<!-- View mode -->
@@ -321,16 +325,16 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					<?php if ( $email ) : ?>
 						<a href="mailto:<?php echo esc_attr( $email ); ?>" class="frs-profile__contact-item" data-view-mode>
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
-								<circle cx="12" cy="12" r="10"/>
-								<path d="M8 12h8M12 8v8"/>
+								<path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/>
+								<rect x="2" y="4" width="20" height="16" rx="2"/>
 							</svg>
 							<?php echo esc_html( $email ); ?>
 						</a>
 						<!-- Edit mode email -->
 						<div class="frs-profile__contact-item" data-edit-mode hidden>
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
-								<circle cx="12" cy="12" r="10"/>
-								<path d="M8 12h8M12 8v8"/>
+								<path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/>
+								<rect x="2" y="4" width="20" height="16" rx="2"/>
 							</svg>
 							<input
 								type="email"
@@ -344,8 +348,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					<?php if ( $phone ) : ?>
 						<a href="tel:<?php echo esc_attr( preg_replace( '/[^\d+]/', '', $phone ) ); ?>" class="frs-profile__contact-item" data-view-mode>
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
-								<circle cx="12" cy="12" r="10"/>
-								<path d="M15.05 11.05a3 3 0 0 0-6.1 0M12 14v.01"/>
+								<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/>
 							</svg>
 							<?php echo esc_html( $phone ); ?>
 						</a>
@@ -353,8 +356,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					<!-- Edit mode phone (always shown so users can add a number) -->
 					<div class="frs-profile__contact-item" data-edit-mode hidden>
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
-							<circle cx="12" cy="12" r="10"/>
-							<path d="M15.05 11.05a3 3 0 0 0-6.1 0M12 14v.01"/>
+							<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/>
 						</svg>
 						<input
 							type="tel"
@@ -407,7 +409,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 			<div class="frs-profile__card frs-profile__card--service-areas">
 				<h3 class="frs-profile__card-title">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+						<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
 						<circle cx="12" cy="10" r="3"/>
 					</svg>
 					Service Areas
@@ -429,7 +431,7 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 						<?php else : ?>
 							<div class="frs-profile__state-card frs-profile__state-card--text">
 								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
-									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+									<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
 									<circle cx="12" cy="10" r="3"/>
 								</svg>
 								<span class="frs-profile__state-abbr"><?php echo esc_html( $area ); ?></span>
@@ -691,7 +693,14 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 			<!-- Edit mode -->
 			<div class="frs-profile__social-edit" data-edit-mode hidden>
 				<div class="frs-profile__social-edit-item">
-					<label>Website</label>
+					<label>
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+							<circle cx="12" cy="12" r="10"/>
+							<path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+							<path d="M2 12h20"/>
+						</svg>
+						Website
+					</label>
 					<input
 						type="url"
 						class="frs-profile__edit-input"
@@ -701,7 +710,14 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					>
 				</div>
 				<div class="frs-profile__social-edit-item">
-					<label>LinkedIn</label>
+					<label>
+						<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+							<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+							<rect x="2" y="9" width="4" height="12"/>
+							<circle cx="4" cy="4" r="2"/>
+						</svg>
+						LinkedIn
+					</label>
 					<input
 						type="url"
 						class="frs-profile__edit-input"
@@ -711,7 +727,12 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					>
 				</div>
 				<div class="frs-profile__social-edit-item">
-					<label>Facebook</label>
+					<label>
+						<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+							<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+						</svg>
+						Facebook
+					</label>
 					<input
 						type="url"
 						class="frs-profile__edit-input"
@@ -721,7 +742,14 @@ $wrapper_attributes = get_block_wrapper_attributes( array(
 					>
 				</div>
 				<div class="frs-profile__social-edit-item">
-					<label>Instagram</label>
+					<label>
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+							<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+							<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+							<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+						</svg>
+						Instagram
+					</label>
 					<input
 						type="url"
 						class="frs-profile__edit-input"
