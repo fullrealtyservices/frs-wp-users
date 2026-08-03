@@ -50,6 +50,18 @@
 		return /^[\d\s\-\(\)\+\.]+$/.test(phone) && phone.replace(/\D/g, '').length >= 10;
 	}
 
+	// Mirrors PhoneFormatter::us() on the PHP side so the post-save DOM patch
+	// matches what a fresh page load would render.
+	function formatPhoneDisplay(phone) {
+		if (!phone) return phone;
+		var digits = phone.replace(/\D/g, '');
+		if (digits.length === 11 && digits[0] === '1') {
+			digits = digits.slice(1);
+		}
+		if (digits.length !== 10) return phone;
+		return '(' + digits.slice(0, 3) + ') ' + digits.slice(3, 6) + '-' + digits.slice(6);
+	}
+
 	function setFieldError(input, message) {
 		if (!input) return;
 		input.classList.add('frs-profile__edit-input--error');
@@ -418,24 +430,24 @@
 				}
 			}
 
-			// Update email link
+			// Update email link (text lives in a dedicated span so this never
+			// clobbers the icon <svg> sitting next to it)
 			if (data.email) {
 				var emailLink = container.querySelector('.frs-profile__contact-item[href^="mailto:"]');
 				if (emailLink) {
 					emailLink.href = 'mailto:' + data.email;
-					emailLink.textContent = data.email;
+					var emailText = emailLink.querySelector('.frs-profile__contact-text');
+					if (emailText) emailText.textContent = data.email;
 				}
 			}
 
-			// Update phone link
+			// Update phone link (same span-targeted approach as email)
 			if (data.phone_number) {
 				var phoneLink = container.querySelector('.frs-profile__contact-item[href^="tel:"]');
 				if (phoneLink) {
 					phoneLink.href = 'tel:' + data.phone_number.replace(/[^\d+]/g, '');
-					var phoneText = phoneLink.querySelector(':scope > :not(svg)') || phoneLink;
-					if (phoneText.nodeType === 1) {
-						phoneText.textContent = data.phone_number;
-					}
+					var phoneText = phoneLink.querySelector('.frs-profile__contact-text');
+					if (phoneText) phoneText.textContent = formatPhoneDisplay(data.phone_number);
 				}
 			}
 		}
