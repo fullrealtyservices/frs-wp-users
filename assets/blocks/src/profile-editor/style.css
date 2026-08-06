@@ -2084,6 +2084,20 @@
 }
 
 /* ====================
+   GOTO HIGHLIGHT (sidebar checklist deep link)
+   ==================== */
+
+@keyframes frsGotoPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(45, 212, 218, 0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(45, 212, 218, 0.25); }
+}
+
+.frs-profile__goto-highlight {
+    border-radius: 8px;
+    animation: frsGotoPulse 0.8s ease-in-out 3;
+}
+
+/* ====================
    FIELD ERROR STATES
    ==================== */
 

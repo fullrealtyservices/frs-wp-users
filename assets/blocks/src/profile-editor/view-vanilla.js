@@ -273,6 +273,46 @@
 			});
 		}
 
+		// Deep link from the sidebar "Profile Completion" checklist:
+		// ?frs_goto=<key> jumps straight into edit mode and scrolls to/
+		// highlights the field that still needs to be filled in.
+		(function handleGotoParam() {
+			var params = new URLSearchParams(window.location.search);
+			var goto = params.get('frs_goto');
+			if (!goto) return;
+
+			var gotoTargets = {
+				headshot: '.frs-profile__avatar-upload-wrap',
+				biography: 'textarea[data-field="biography"]',
+				phone_number: '[data-field="phone_number"]',
+				service_areas: '.frs-profile__edit-service-areas',
+				specialties: '.frs-profile__card--specialties .frs-profile__checkbox-grid',
+				social_link: '.frs-profile__social-edit'
+			};
+			var selector = gotoTargets[goto];
+
+			setEditMode(true);
+
+			if (selector) {
+				var target = container.querySelector(selector);
+				if (target) {
+					setTimeout(function() {
+						target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+						target.classList.add('frs-profile__goto-highlight');
+						setTimeout(function() {
+							target.classList.remove('frs-profile__goto-highlight');
+						}, 2500);
+					}, 100);
+				}
+			}
+
+			// Drop the param so a refresh/back doesn't re-trigger the jump.
+			params.delete('frs_goto');
+			var query = params.toString();
+			var newUrl = window.location.pathname + (query ? '?' + query : '') + window.location.hash;
+			window.history.replaceState({}, '', newUrl);
+		})();
+
 		// Cancel button
 		if (cancelBtn) {
 			cancelBtn.addEventListener('click', function(e) {
